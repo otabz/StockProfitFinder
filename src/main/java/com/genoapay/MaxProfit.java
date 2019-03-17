@@ -8,33 +8,39 @@ public class MaxProfit {
 	 * between times
 	 */
 	int[] stockPrices;
-	private Integer minStockPrice;
+	private Integer minStockPriceIndex;
 
 	// external dependency must be very clear, i.e. stock prices
 	public MaxProfit(int[] stockPrices) {
 		this.stockPrices = stockPrices;
 	}
 	
-	public int buy() {
-		int min = this.stockPrices[0];
-		for(int i=0; i<this.stockPrices.length; i++) {
-			min = this.stockPrices[i] < min ? this.stockPrices[i] : min;
-		}
-		this.minStockPrice = min;
-		return min;
+	public int buyAt(int price) {
+		this.minStockPriceIndex = price;
+		return this.stockPrices[this.minStockPriceIndex];
 	}
 	
-	public int sell() {
-		// use this expression to avoid typo of =, leading to serious logical bugs
-		if(null == minStockPrice) {
-			throw new IllegalStateException("You didn't buy a stock yet!");
+	public int findMinimumStockPriceAt() {
+		int minPriceIndex = 0;
+		for(int i=1; i<this.stockPrices.length; i++) {
+			minPriceIndex = this.stockPrices[minPriceIndex] < 
+					this.stockPrices[i] ? minPriceIndex : i;
 		}
-		
-		int max = this.stockPrices[0];
-		for(int i=0; i<this.stockPrices.length; i++) {
-			max = this.stockPrices[i] > max ? this.stockPrices[i] : max;
+		return minPriceIndex;
+	}
+	
+	
+	public int sellAt(int price) {
+		return this.stockPrices[price];
+	}
+	
+	public int findMaximumStockPriceAfter(int time) {
+		int maxPriceIndex = time;
+		for(int i=++time; i<this.stockPrices.length; i++) {
+			maxPriceIndex = this.stockPrices[maxPriceIndex] > 
+					this.stockPrices[i] ? maxPriceIndex : i;
 		}
-		return max;
+		return maxPriceIndex;
 	}
 
 	
