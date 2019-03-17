@@ -1,5 +1,6 @@
 package com.genoapay;
 
+import java.security.InvalidParameterException;
 import java.util.Date;
 
 public class MaxProfit {
@@ -33,18 +34,45 @@ public class MaxProfit {
 
 	public void findMaxProfitPricePair() {
 		int maxProfit = Integer.MIN_VALUE;
-		// lets start with naive approach
-		for (int i = 0; i < this.stockPrices.length; i++) {
-			for (int j = i + 1; j < this.stockPrices.length; j++) {
-				int left = this.stockPrices[i];
-				int right = this.stockPrices[j];
-				int diff = right - left;
-				if (diff > maxProfit) {
-					maxProfit = diff;
-					this.minStockPriceIndex = i;
-					this.maxStockPriceIndex = j;
-				}
+		int diff = 0;
+		// ~ O(n)
+		int j = this.stockPrices.length-2;
+		for(int i = this.stockPrices.length-1; i>=0; i--) {
+			notNegative(this.stockPrices[i]);
+			if(i > j)
+				diff = this.stockPrices[i] - this.stockPrices[j];
+			else if(i < j)
+				diff = this.stockPrices[j] - this.stockPrices[i];
+			else 
+				continue;
+			
+			if(diff >= maxProfit) {
+				maxProfit = diff;
+				this.maxStockPriceIndex = j;
+				this.minStockPriceIndex = i;
 			}
+			
+			if(this.stockPrices[i] > this.stockPrices[j])
+				j = i;
+		}
+// ~ O(n^2)		
+//		for (int i = 0; i < this.stockPrices.length; i++) {
+//			for (int j = i + 1; j < this.stockPrices.length; j++) {
+//				int left = this.stockPrices[i];
+//				int right = this.stockPrices[j];
+//				int diff = right - left;
+//				if (diff > maxProfit) {
+//					maxProfit = diff;
+//					this.minStockPriceIndex = i;
+//					this.maxStockPriceIndex = j;
+//				}
+//			}
+//		}
+	}
+	
+	private void notNegative(int value) {
+		if(value < 0) {
+			throw new InvalidParameterException("Negative prices are not allowed!");
 		}
 	}
 
@@ -63,12 +91,19 @@ public class MaxProfit {
 	}
 
 	public int getMaxProfit() {
+		notEmpty();
 		findMaxProfitPricePair();
 		buyAt(getMinStockPriceIndex());
 		sellAt(getMaxStockPriceIndex());
 		int max = this.stockPrices[getMaxStockPriceIndex()]
 				- this.stockPrices[getMinStockPriceIndex()];
 		return max;
+	}
+	
+	private void notEmpty() {
+		if(null == this.stockPrices || this.stockPrices.length < 2) {
+			throw new InvalidParameterException("Stock prices are empty!");
+		}
 	}
 
 	public int getMinStockPriceIndex() {

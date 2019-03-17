@@ -1,6 +1,7 @@
 package com.genoapay;
 
 import static org.junit.Assert.*;
+import java.security.InvalidParameterException;
 import java.util.Date;
 import org.junit.Rule;
 import org.junit.Test;
@@ -187,7 +188,7 @@ public class MaxProfitTest {
 	
 	@Test
 	public void testGetMaxProfitSample2() {
-		int[] stockPrices = { 3, 10, 13, 8, 5, 9};
+		int[] stockPrices = { 10, 1, 2, 3, 4, 5};
 		MaxProfit profit = new MaxProfit(stockPrices,
 				new com.genoapay.TimeUtils() {
 
@@ -204,7 +205,43 @@ public class MaxProfitTest {
 				});
 
 		int max = profit.getMaxProfit();
-		assertEquals("Max profit is incorrect!", 10, max);
+		assertEquals("Max profit is incorrect!", 4, max);
+	}
+	
+	@Test
+	public void stockPricesMustNotBeEmpty() {
+		int[] stockPrices = null;
+		MaxProfit profit = new MaxProfit(stockPrices);
+		
+		exception.expect(InvalidParameterException.class);
+		exception
+				.expectMessage("Stock prices are empty!");
+		
+		profit.getMaxProfit();
+	}
+	
+	@Test
+	public void numberOfPricesMustBeGreaterThan2() {
+		int[] stockPrices = new int[1];
+		MaxProfit profit = new MaxProfit(stockPrices);
+		
+		exception.expect(InvalidParameterException.class);
+		exception
+				.expectMessage("Stock prices are empty!");
+		
+		profit.getMaxProfit();
+	}
+	
+	@Test
+	public void mustNotAcceptNegativePrices() {
+		int[] stockPrices = { 10, 1, 2, 3, -4, 5};
+		MaxProfit profit = new MaxProfit(stockPrices);
+		
+		exception.expect(InvalidParameterException.class);
+		exception
+				.expectMessage("Negative prices are not allowed!");
+		
+		profit.getMaxProfit();
 	}
 
 }
