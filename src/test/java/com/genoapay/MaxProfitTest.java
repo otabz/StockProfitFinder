@@ -21,13 +21,37 @@ public class MaxProfitTest {
 	}
 	
 	@Test
-	public void youCanSellOnlyIfYouBuyAStockFirst() {
+	public void youCannotSellIfYouDontBuy() {
 		exception.expect(IllegalStateException.class);
 		exception.expectMessage("You didn't buy a stock yet!");
 		
 		int[] stockPrices = {10,7,5,8,11,9};
 		MaxProfit profit = new MaxProfit(stockPrices);
 		profit.sell();
+	}
+	
+	@Test
+	public void youCanSellOnlyIfYouBuyFirst() {
+		int[] stockPrices = {10,7,5,8,11,9};
+		MaxProfit profit = new MaxProfit(stockPrices);
+		
+		profit.buy();
+		profit.sell();
+	}
+	
+	@Test
+	public void testSellStockAtMaximumPriceAfterBuying() {
+		int[] stockPrices = {10,7,5,8,11,9};
+		MaxProfit profit = new MaxProfit(stockPrices);
+		
+		profit.buy();
+		int maxSellingPrice = profit.sell();
+		
+		assertEquals(11, maxSellingPrice);
+	}
+
+	@Test
+	public void canOnlySellAtPriceWhosTimestampGreaterThanBuyingPrice() {
 	}
 
 }

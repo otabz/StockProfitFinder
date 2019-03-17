@@ -29,7 +29,12 @@ public class MaxProfit {
 		if(null == minStockPrice) {
 			throw new IllegalStateException("You didn't buy a stock yet!");
 		}
-		return 0;
+		
+		int max = this.stockPrices[0];
+		for(int i=0; i<this.stockPrices.length; i++) {
+			max = this.stockPrices[i] > max ? this.stockPrices[i] : max;
+		}
+		return max;
 	}
 
 	
