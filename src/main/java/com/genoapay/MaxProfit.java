@@ -1,5 +1,7 @@
 package com.genoapay;
 
+import java.util.Date;
+
 public class MaxProfit {
 	/**
 	 * Assumptions: As it is an array of primitive integers and indices
@@ -10,26 +12,34 @@ public class MaxProfit {
 	int[] stockPrices;
 	private Integer minStockPriceIndex;
 	private Integer maxStockPriceIndex;
+	private Date buyingTime;
+	private TimeUtils time;
 
 	// external dependency must be very clear, i.e. stock prices
 	public MaxProfit(int[] stockPrices) {
 		this.stockPrices = stockPrices;
+		this.time = new TimeUtils.TimeUtilsJavaSystem();
 	}
-	
-	public int buyAt(int price) {
-		this.minStockPriceIndex = price;
-		return this.stockPrices[this.minStockPriceIndex];
+
+	public MaxProfit(int[] stockPrices, TimeUtils mockedUtils) {
+		this.stockPrices = stockPrices;
+		this.time = mockedUtils;
 	}
-	
+
+	public int buyAt(int index) {
+		this.buyingTime = this.time.getCurrentTime();
+		return this.stockPrices[index];
+	}
+
 	public void findMaxProfitPricePair() {
 		int maxProfit = Integer.MIN_VALUE;
 		// lets start with naive approach
-		for(int i=0; i<this.stockPrices.length; i++){
-			for(int j=i+1; j<this.stockPrices.length; j++) {
+		for (int i = 0; i < this.stockPrices.length; i++) {
+			for (int j = i + 1; j < this.stockPrices.length; j++) {
 				int left = this.stockPrices[i];
 				int right = this.stockPrices[j];
-				int diff =  right - left;
-				if(diff > maxProfit) {
+				int diff = right - left;
+				if (diff > maxProfit) {
 					maxProfit = diff;
 					this.minStockPriceIndex = i;
 					this.maxStockPriceIndex = j;
@@ -37,11 +47,27 @@ public class MaxProfit {
 			}
 		}
 	}
-	
+
 	public int sellAt(int price) {
+		if (null == this.minStockPriceIndex || null == this.maxStockPriceIndex
+				|| null == this.buyingTime) {
+			throw new IllegalStateException(
+					"You can't sell before buying a stock!");
+		}
+		boolean elapsed = this.time.isMinuteElapsed(this.buyingTime);
+		if (!elapsed) {
+			throw new IllegalStateException(
+					"You can't sell stock within 1 minute of buying!");
+		}
 		return this.stockPrices[price];
 	}
-	
+
+	public void findMaxProfit() {
+		findMaxProfitPricePair();
+		buyAt(getMinStockPriceIndex());
+		sellAt(getMaxStockPriceIndex());
+	}
+
 	public int getMinStockPriceIndex() {
 		return this.minStockPriceIndex;
 	}
@@ -49,5 +75,5 @@ public class MaxProfit {
 	public int getMaxStockPriceIndex() {
 		return this.maxStockPriceIndex;
 	}
-	
+
 }
