@@ -62,10 +62,13 @@ public class MaxProfit {
 		return this.stockPrices[price];
 	}
 
-	public void findMaxProfit() {
+	public int getMaxProfit() {
 		findMaxProfitPricePair();
 		buyAt(getMinStockPriceIndex());
 		sellAt(getMaxStockPriceIndex());
+		int max = this.stockPrices[getMaxStockPriceIndex()]
+				- this.stockPrices[getMinStockPriceIndex()];
+		return max;
 	}
 
 	public int getMinStockPriceIndex() {

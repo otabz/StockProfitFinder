@@ -1,9 +1,7 @@
 package com.genoapay;
 
 import static org.junit.Assert.*;
-
 import java.util.Date;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -141,7 +139,7 @@ public class MaxProfitTest {
 		exception
 				.expectMessage("You can't sell stock within 1 minute of buying!");
 
-		profit.findMaxProfit();
+		profit.getMaxProfit();
 	}
 
 	@Test
@@ -162,7 +160,51 @@ public class MaxProfitTest {
 
 				});
 
-		profit.findMaxProfit();
+		profit.getMaxProfit();
+	}
+	
+	@Test
+	public void testGetMaxProfitSample1() {
+		int[] stockPrices = { 10, 7, 5, 8, 11, 9 };
+		MaxProfit profit = new MaxProfit(stockPrices,
+				new com.genoapay.TimeUtils() {
+
+					@Override
+					public Date getCurrentTime() {
+						return new Date();
+					}
+
+					@Override
+					public boolean isMinuteElapsed(Date since) {
+						return true;
+					}
+
+				});
+
+		int max = profit.getMaxProfit();
+		assertEquals("Max profit is incorrect!", 6, max);
+	}
+	
+	@Test
+	public void testGetMaxProfitSample2() {
+		int[] stockPrices = { 3, 10, 13, 8, 5, 9};
+		MaxProfit profit = new MaxProfit(stockPrices,
+				new com.genoapay.TimeUtils() {
+
+					@Override
+					public Date getCurrentTime() {
+						return new Date();
+					}
+
+					@Override
+					public boolean isMinuteElapsed(Date since) {
+						return true;
+					}
+
+				});
+
+		int max = profit.getMaxProfit();
+		assertEquals("Max profit is incorrect!", 10, max);
 	}
 
 }
